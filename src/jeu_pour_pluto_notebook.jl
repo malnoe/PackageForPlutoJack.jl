@@ -68,10 +68,10 @@ function turn!(game,player_action)
             end_game!(game)
         end
         elseif (player_action == "stand")
-            hand_value_dealer = hand_value(dealer_hand)
+            hand_value_dealer = hand_value(game.dealer_hand)
             while (hand_value_dealer < 17)
                 take_a_card(game.blackjack_deck,game.dealer_hand)
-                hand_value_dealer = hand_value(dealer_hand)
+                hand_value_dealer = hand_value(game.dealer_hand)
             end
             game.end_game = true
         end    
@@ -80,12 +80,20 @@ end
 function Vizagrams.draw(game::Game)
     text_player_hand = "The player's hand :\n"
     for card in game.player_hand.cards
-        text_player_hand = text_player_hand * "$card.rank of $card.suit, "
+        rank = card.rank
+        suit = card.suit
+        text_player_hand = text_player_hand * "$rank of $suit, "
     end
+    hand_value_player = hand_value(game.player_hand)
+
     text_dealer_hand = "The dealer's hand :\n"
     for card in game.dealer_hand.cards
-        text_dealer_hand = text_dealer_hand * "$card.rank of $card.suit, "
+        rank = card.rank
+        suit = card.suit
+        text_dealer_hand = text_dealer_hand * "$rank of $suit, "
     end
+    hand_value_dealer = hand_value(game.dealer_hand)
+
     text_end_game = ""
     if(game.end_game)
         if ((hand_value_player <= 21) && ((hand_value_dealer < hand_value_player) || hand_value_dealer > 21))
@@ -101,13 +109,13 @@ function Vizagrams.draw(game::Game)
         text_end_game = "Choose an action!"
     end
 
-    full_text = text_player_hand * "\n" * text_dealer_hand * "\n" * text_end_game
-    d = TextMark(full_text, fontsize=11)
-    return draw(d, height=100)
+    full_text = text_player_hand * " ($hand_value_player) " * "\n" * text_dealer_hand * " ($hand_value_dealer) " * "\n" * text_end_game
+    d = TextMark(text=full_text, fontsize=10)
+    return draw(d, color=:red, height=50)
 end
 
 function interaction()
-    d = S(:fill=>:blue)*(S(:__id => :circ)T(3,0)Circle() + S(:__id => :tri)T(0,2)RegularPolygon(n=3) +
+    d = S(:fill=>:blue)*(S(:__id => :Cercle)T(3,0)Circle() + S(:__id => :tri)T(0,2)RegularPolygon(n=3) +
     S(:__id => :sq)R(π/10)U(2)Square()) +
     T(2,-2)S(:stroke=>:red,:strokeWidth=>5)Line([[0,0],[3,0],[3,3]])
  	return draw(d, height=400; :id => :graph)

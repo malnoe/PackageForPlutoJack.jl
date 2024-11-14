@@ -1,4 +1,3 @@
-
 module CardDefinitions
 
 using Random
