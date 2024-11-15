@@ -53,11 +53,11 @@ end
 
 # ╔═╡ f87bdb7a-3fd2-4c65-ba38-54cdafdc994f
 begin
-	if etat == "sq"
+	if etat == "hit"
 		turn!(game,"hit")
-	elseif etat == "Cercle"
+	elseif etat == "stand"
 		turn!(game,"stand")
-	elseif etat == "tri"
+	elseif etat == "newgame"
 		new!(game)
 	end
 	update_view=rand()

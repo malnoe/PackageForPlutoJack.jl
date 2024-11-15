@@ -12,6 +12,13 @@ mutable struct Game
 end
 
 """
+Fonction qui retourne True si la main hand passée en argument vaut 21.
+"""
+function winning_hand(hand::Deck)
+    return hand_value(hand) == 21
+end
+
+"""
 Fonction d'initialisation du jeu : renvoie une game
 """
 function initialize_game()
@@ -29,7 +36,8 @@ function initialize_game()
     take_a_card(blackjack_deck,dealer_hand)
     take_a_card(blackjack_deck,player_hand)
 
-    return Game(blackjack_deck,player_hand,dealer_hand,false)
+    end_game = winning_hand(player_hand)
+    return Game(blackjack_deck,player_hand,dealer_hand,end_game)
 end
 
 """
@@ -54,7 +62,7 @@ function new!(game::Game)
     game.blackjack_deck = blackjack_deck
     game.player_hand = player_hand
     game.dealer_hand = dealer_hand
-    game.end_game = false
+    game.end_game = winning_hand(player_hand)
 end
 
 function end_game!(game::Game)
@@ -66,7 +74,6 @@ function turn!(game,player_action)
         if(player_action=="hit")
             take_a_card(game.blackjack_deck,game.player_hand)
             end_game!(game)
-        end
         elseif (player_action == "stand")
             hand_value_dealer = hand_value(game.dealer_hand)
             while (hand_value_dealer < 17)
@@ -74,7 +81,8 @@ function turn!(game,player_action)
                 hand_value_dealer = hand_value(game.dealer_hand)
             end
             game.end_game = true
-        end    
+        end
+    end  
 end
 
 function Vizagrams.draw(game::Game)
@@ -115,10 +123,13 @@ function Vizagrams.draw(game::Game)
 end
 
 function interaction()
-    d = S(:fill=>:blue)*(S(:__id => :Cercle)T(3,0)Circle() + S(:__id => :tri)T(0,2)RegularPolygon(n=3) +
-    S(:__id => :sq)R(π/10)U(2)Square()) +
-    T(2,-2)S(:stroke=>:red,:strokeWidth=>5)Line([[0,0],[3,0],[3,3]])
- 	return draw(d, height=400; :id => :graph)
+
+    d = (S(:__id => :"newgame", :fill => :green)Circle()+TextMark(text="New Game", anchor=:c, fontsize=0.2)
+	→ (T(3,0),S(:__id => :"hit", :fill => :green)Circle()+ TextMark(text="Hit", anchor=:c, fontsize=0.2)
+	→ (T(0.5,0),S(:__id => :"stand", :fill => :green)Circle()+ TextMark(text="Stand", anchor=:c, fontsize=0.2)
+	)))
+
+ 	return draw(d, height=100; :id => :graph)
 end
 
 
